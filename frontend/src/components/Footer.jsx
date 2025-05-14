@@ -54,7 +54,7 @@ export default function Footer() {
             </li>
             <li>
               <a
-                href="https://github.com/your-repo"
+                href="https://github.com/NoManNayeem/Agentica"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-blue-600"
@@ -70,7 +70,7 @@ export default function Footer() {
           <h4 className="font-semibold mb-2">Connect</h4>
           <div className="flex space-x-4 mb-4">
             <a
-              href="https://twitter.com/yourprofile"
+              href="https://github.com/NoManNayeem/Agentica"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-blue-600"
@@ -78,7 +78,7 @@ export default function Footer() {
               <FiTwitter size={20} />
             </a>
             <a
-              href="https://github.com/your-repo"
+              href="https://github.com/NoManNayeem/Agentica"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-blue-600"
