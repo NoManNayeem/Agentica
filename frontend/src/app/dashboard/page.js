@@ -120,7 +120,7 @@ export default function DashboardPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Greeting */}
-      <div className="flex items-center justify-between mb-8 mt-6">
+      <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-gray-900">
           Welcome back,{" "}
           <span className="text-blue-600">{userData.username}</span>!
