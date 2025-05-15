@@ -28,59 +28,76 @@ export default function ChatPage() {
 
   // Initialize chat session
   useEffect(() => {
-    if (!user) return;
+  if (!user) return;
 
-    const fetchSession = async () => {
-      const token = localStorage.getItem("agenticaAccessToken");
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
-
-      try {
-        // Try to fetch existing sessions
-        let res = await fetch(`${API_URL}/chat/sessions/`, { headers });
-        if (!res.ok) throw new Error("Could not load sessions");
-
-        const sessions = await res.json();
-        let sid = sessions[0]?.id;
-
-        // If no session exists, create one
-        if (!sid) {
-          res = await fetch(`${API_URL}/chat/sessions/`, {
-            method: "POST",
-            headers,
-            body: JSON.stringify({}),
-          });
-          if (!res.ok) throw new Error("Could not create session");
-          const newSession = await res.json();
-          sid = newSession.id;
-        }
-
-        setSessionId(sid);
-
-        // Fetch session messages
-        res = await fetch(`${API_URL}/chat/sessions/${sid}/`, { headers });
-        if (!res.ok) throw new Error("Could not load chat history");
-
-        const { messages: history } = await res.json();
-        setMessages(
-          history.map((m) => ({
-            sender: m.sender,
-            text: m.content,
-            timestamp: m.timestamp,
-          }))
-        );
-      } catch (e) {
-        console.error(e);
-        setError(e.message);
-      } finally {
-        setInitLoading(false);
-      }
+  const fetchSession = async () => {
+    const token = localStorage.getItem("agenticaAccessToken");
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     };
 
-    fetchSession();
-  }, [user]);
+    try {
+      // Try to fetch existing sessions
+      let res = await fetch(`${API_URL}/chat/sessions/`, { headers });
+
+      if (!res.ok) {
+        const errorBody = await res.text(); // Fallback if JSON fails
+        console.error("Session fetch failed", res.status, errorBody);
+        throw new Error("Could not load sessions. Please try again later.");
+      }
+
+      const sessions = await res.json();
+      let sid = sessions[0]?.id;
+
+      // If no session exists, create one
+      if (!sid) {
+        res = await fetch(`${API_URL}/chat/sessions/`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({}),
+        });
+
+        if (!res.ok) {
+          const errorBody = await res.text();
+          console.error("Session creation failed", res.status, errorBody);
+          throw new Error("Could not create session. Please try again later.");
+        }
+
+        const newSession = await res.json();
+        sid = newSession.id;
+      }
+
+      setSessionId(sid);
+
+      // Fetch session messages
+      res = await fetch(`${API_URL}/chat/sessions/${sid}/`, { headers });
+
+      if (!res.ok) {
+        const errorBody = await res.text();
+        console.error("Chat history fetch failed", res.status, errorBody);
+        throw new Error("Could not load chat history.");
+      }
+
+      const { messages: history } = await res.json();
+      setMessages(
+        history.map((m) => ({
+          sender: m.sender,
+          text: m.content,
+          timestamp: m.timestamp,
+        }))
+      );
+    } catch (e) {
+      console.error("Chat initialization error:", e);
+      setError(e.message || "An unknown error occurred.");
+    } finally {
+      setInitLoading(false);
+    }
+  };
+
+  fetchSession();
+}, [user]);
+
 
   // Auto-scroll to bottom
   useEffect(() => {

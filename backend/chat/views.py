@@ -13,6 +13,9 @@ from .serializers import (
     ChatMessageCreateSerializer,
 )
 
+from .agent import agent
+
+
 
 class ChatSessionListCreateView(generics.ListCreateAPIView):
     """
@@ -98,8 +101,12 @@ class ChatMessageCreateView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user_msg = serializer.save()
 
-        # Dummy bot reply
-        bot_content = f"Echo: {user_msg.content}"
+        # Store response in a variable
+        response: RunResponse = agent.run("Your query here")
+        # print(response.content)
+        bot_content = f"Agentica: {response.content}"
+
+        # ✅ FIXED: define bot_msg before using it
         bot_msg = ChatMessage.objects.create(
             session=user_msg.session,
             sender=ChatMessage.SENDER_BOT,

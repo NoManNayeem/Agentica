@@ -45,4 +45,5 @@ docker-compose up --build
   <img src="./screenshots/screenshot_3.png" alt="Screenshot 3" />
   <img src="./screenshots/screenshot_4.png" alt="Screenshot 4" />
   <img src="./screenshots/screenshot_5.png" alt="Screenshot 5" />
+  <img src="./screenshots/screenshot_6.png" alt="Screenshot 6" />
 </div>
