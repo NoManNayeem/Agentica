@@ -4,6 +4,8 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
+from agno.agent import RunResponse
+
 
 from .models import ChatSession, ChatMessage
 from .serializers import (
@@ -13,7 +15,7 @@ from .serializers import (
     ChatMessageCreateSerializer,
 )
 
-from .agent import agent
+from .agent import get_response_content
 
 
 
@@ -102,9 +104,15 @@ class ChatMessageCreateView(generics.CreateAPIView):
         user_msg = serializer.save()
 
         # Store response in a variable
-        response: RunResponse = agent.run("Your query here")
+        try:
+            response= get_response_content(user_msg.content)
+            if not response:
+                raise ValueError("Empty response from agent")
+            bot_content = response
+        except Exception as e:
+            bot_content = "I apologize, I'm having trouble generating a joke right now."
         # print(response.content)
-        bot_content = f"Agentica: {response.content}"
+        bot_content = f"Agentica: {response}"
 
         # ✅ FIXED: define bot_msg before using it
         bot_msg = ChatMessage.objects.create(
